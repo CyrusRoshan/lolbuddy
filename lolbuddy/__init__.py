@@ -104,9 +104,31 @@ def main():
         if not os.path.exists(champFolder):
             os.makedirs(champFolder)
 
-        championsComplete += 1
-        print('({0}/{1}) champions complete...'.format(championsComplete, totalChampions), end='\r')
-        sys.stdout.flush()
+        print(champion[0]['key'])
+        for role in champion:
+
+            print(role['role'])
+
+            print(role['items']['highestWinPercent']['winPercent'], role['items']['highestWinPercent']['games'])
+            for item in role['items']['highestWinPercent']['items']:
+                print(item['id'])
+
+            print(role['items']['mostGames']['winPercent'], role['items']['mostGames']['games'])
+            for item in role['items']['mostGames']['items']:
+                print(item['id'])
+
+            print(role['skills']['mostGames']['winPercent'], role['skills']['mostGames']['games'])
+            for skill in role['skills']['mostGames']['order']:
+                print(skill)
+
+            print(role['skills']['highestWinPercent']['winPercent'], role['skills']['highestWinPercent']['games'])
+            for skill in role['skills']['highestWinPercent']['order']:
+                print(skill)
+
+            #open('championgg.dat', 'w+')
+        #championsComplete += 1
+        #print('({0}/{1}) champions complete...'.format(championsComplete, totalChampions), end='\r')
+        #sys.stdout.flush()
 
 
 if __name__ == '__main__':
