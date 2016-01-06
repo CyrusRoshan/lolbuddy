@@ -3,8 +3,7 @@ a cli tool to update league of legends itemsets and ability order from champion.
 
 #Installation:
 
-open Terminal
-* ```git clone https://github.com/CyrusRoshan/lolbuddy.git```
+As simple as ```pip3 install lolbuddy```
 
 #Usage:
 
