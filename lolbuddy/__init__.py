@@ -4,8 +4,10 @@ from requests_futures.sessions import FuturesSession
 import sys
 import os
 import pickle
-#import pprint
-#pprint used for debug, doesn't need to be used for production
+from copy import deepcopy
+import shutil
+#import pprint #pprint used for debug, doesn't need to be used for production
+#pp = pprint.PrettyPrinter(indent=4)
 
 def main():
 
@@ -58,11 +60,12 @@ def main():
 
     session = FuturesSession()
 
+    print('\nGetting champion info...')
+
     apiKeyValidated = False
     while not apiKeyValidated:
         url = 'http://api.champion.gg/champion?api_key=' + apiKey
         infoRequest = session.get(url) #start request
-        #requestData = json.loads(infoRequest.result().content.decode('utf-8')) #finish request
         requestData = infoRequest.result().content.decode('utf-8') #finish request
         try:
             champions = json.loads(requestData)
@@ -73,7 +76,7 @@ def main():
             pickle.dump(data, open('.lolbuddy', 'wb'))
     totalChampions = len(champions)
     championsComplete = 0
-    print('\nThere are currently {0} champions. Getting individual champion data...\n'.format(totalChampions))
+    print('\nThere are currently {0} champions. Getting individual champion data...'.format(totalChampions))
 
     championInfo = []
 
@@ -95,40 +98,80 @@ def main():
         print('({0}/{1}) champions complete...'.format(championsComplete, totalChampions), end='\r')
         sys.stdout.flush()
 
-    print('\n\nAll champion data fetched, creating item sets...')
+    print('\nAll champion data fetched, removing previous item sets...')
 
     championsComplete = 0
+    shutil.rmtree(location + '/Champions')
+
+    print('Previous item sets deleted, creating new item sets...\n')
 
     for champion in championInfo:
-        champFolder = location + '/Champions/' + champion[0]['key']
+        champFolder = os.path.join(location, 'Champions', champion[0]['key'], 'Recommended')
         if not os.path.exists(champFolder):
             os.makedirs(champFolder)
 
-        print(champion[0]['key'])
-        for role in champion:
+        for roleNum, role in enumerate(champion):
+            try:
+                jsonFile = {
+                    'title': role['role'],
+                    'type': 'custom',
+                    'map': 'SR',
+                    'mode': 'CLASSIC',
+                    'priority': True,
+                    'sortrank': 0,
+                    'blocks': []
+                }
 
-            print(role['role'])
+                itemList = lambda listName: deepcopy({
+                    'type': listName,
+                    'recMath': False,
+                    'minSummonerLevel': -1,
+                    'maxSummonerLevel': -1,
+                    'showIfSummonerSpell': '',
+                    'hideIfSummonerSpell': '',
+                    'items': []
+                })
 
-            print(role['items']['highestWinPercent']['winPercent'], role['items']['highestWinPercent']['games'])
-            for item in role['items']['highestWinPercent']['items']:
-                print(item['id'])
+                winItems = itemList('Highest Win %: {0}% of {1} total games won'.format(role['items']['highestWinPercent']['winPercent'], role['items']['highestWinPercent']['games']))
 
-            print(role['items']['mostGames']['winPercent'], role['items']['mostGames']['games'])
-            for item in role['items']['mostGames']['items']:
-                print(item['id'])
+                popItems = itemList('Most Popular: {0}% of {1} total games won'.format(role['items']['mostGames']['winPercent'], role['items']['mostGames']['games']))
 
-            print(role['skills']['mostGames']['winPercent'], role['skills']['mostGames']['games'])
-            for skill in role['skills']['mostGames']['order']:
-                print(skill)
 
-            print(role['skills']['highestWinPercent']['winPercent'], role['skills']['highestWinPercent']['games'])
-            for skill in role['skills']['highestWinPercent']['order']:
-                print(skill)
+                for item in role['items']['highestWinPercent']['items']:
+                    winItems['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
 
-            #open('championgg.dat', 'w+')
-        #championsComplete += 1
+                for item in role['items']['mostGames']['items']:
+                    popItems['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+
+                skillString = ''
+
+                winSkills = itemList('Highest Win %: {0}% of {1} total games won'.format(role['skills']['highestWinPercent']['winPercent'], role['skills']['highestWinPercent']['games']))
+                for skill in role['skills']['highestWinPercent']['order']:
+                    skillString += skill + '>'
+                winSkills['type'] = skillString[:-1]
+                winSkills['items'] = [{'id': '1001', 'count': 1}]
+
+                skillString = ''
+
+                popSkills = itemList('Most Popular: {0}% of {1} total games won'.format(role['skills']['mostGames']['winPercent'], role['skills']['mostGames']['games']))
+                for skill in role['skills']['mostGames']['order']:
+                    skillString += skill + '>'
+                popSkills['type'] = skillString[:-1]
+                popSkills['items'] = [{'id': '1001', 'count': 1}]
+
+                jsonFile['blocks'].extend([winItems, popItems, winSkills, popSkills])
+
+                itemSetFile = open('{0}/championgg{1}.json'.format(champFolder, roleNum), 'w+')
+                itemSetFile.write(json.dumps(jsonFile))
+
+            except:
+                print('Huh, looks like something\'s up with data on {0} {1}...'.format(champion[0]['key'], role['role']))
+
+        championsComplete += 1
         #print('({0}/{1}) champions complete...'.format(championsComplete, totalChampions), end='\r')
         #sys.stdout.flush()
+
+    print('\n\nAll Done! Your item sets are ready!\n\n')
 
 
 if __name__ == '__main__':
