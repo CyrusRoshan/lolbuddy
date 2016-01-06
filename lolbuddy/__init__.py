@@ -51,7 +51,7 @@ def main():
         writeToFile = True
         #keep prompting user until they get it right
         while len(apiKey) < 20:
-            apiKey = input('Not a valid API key, please enter one from api.champion.gg: ')
+            apiKey = input('Please enter a valid API key from api.champion.gg: ')
 
     if writeToFile:
         data = {'location': location, 'apiKey': apiKey}
@@ -75,9 +75,9 @@ def main():
             pickle.dump(data, open('.lolbuddy', 'wb'))
     totalChampions = len(champions)
     championsComplete = 0
-    print('\nThere are currently {0} champions. Getting individual champion data...'.format(totalChampions))
-
     championInfo = []
+
+    print('\nThere are currently {0} champions. Getting individual champion data...'.format(totalChampions))
 
     def incrementChamps(sess, resp):
         nonlocal championsComplete, championInfo
