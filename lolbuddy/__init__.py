@@ -55,7 +55,6 @@ def main():
 
     if writeToFile:
         data = {'location': location, 'apiKey': apiKey}
-        print(data)
         pickle.dump(data, open('.lolbuddy', 'wb'))
 
     session = FuturesSession()
