@@ -13,7 +13,9 @@ Use ```lolbuddy``` to start lolbuddy and automatically fetch and create the item
 
 If no API key or league installation location have been entered, or they are invalid, you will be prompted for the API key, and lolbuddy will check the default league location for your OS. If it is not found, you will be prompted for that as well.
 
-Use ```lolbuddy -r``` or ```lolbuddy --reset``` to reset saved data (league location and API key)
+Use ```lolbuddy -r``` or ```lolbuddy --reset``` to reset lolbuddy (delete info on league location and API key)
+
+Use ```lolbuddy -d``` or ```lolbuddy --delete``` to delete all item sets
 
 ---
 

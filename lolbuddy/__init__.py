@@ -6,8 +6,8 @@ import os
 import pickle
 from copy import deepcopy
 import shutil
-#import pprint #pprint used for debug, doesn't need to be used for production
-#pp = pprint.PrettyPrinter(indent=4)
+# import pprint # pprint used for debug, doesn't need to be used for production
+# pp = pprint.PrettyPrinter(indent=4)
 
 def main():
 
@@ -15,9 +15,18 @@ def main():
         try:
             os.remove('.lolbuddy')
         except:
-            print('\nThere was no pre-existing config file anyway...\n')
+            print('\nThere was no existing config file, could not delete nonexistent file. Exiting...\n')
+        sys.exit("Exiting after an attempted reset")
 
-    #don't want to write to file if we don't need to
+    if ('--delete' in sys.argv or '-d' in sys.argv):
+        try:
+            data = pickle.load(open('.lolbuddy', 'rb'))
+            shutil.rmtree(data['location'] + '/Champions')
+        except:
+            print('\nLeague install location data wasn\'t stored, could not delete item sets. Exiting...\n')
+        sys.exit("Exiting after an attempted data deletion")
+
+    # don't want to write to file if we don't need to
     writeToFile = False
 
     try:
@@ -30,26 +39,26 @@ def main():
         location = ''
         apiKey = ''
 
-    #Check if the .lolbuddy file either doesn't have the location saved or doesn't have the correct location saved
+    # Check if the .lolbuddy file either doesn't have the location saved or doesn't have the correct location saved
     if (location == '' or not os.path.exists(location)):
-        #otherwise, check if the location is one of the defaults for the OS
+        # otherwise, check if the location is one of the defaults for the OS
         writeLocation = True
-        if os.name == 'posix': #OS X
+        if os.name == 'posix': # OS X
             location = '/Applications/League of Legends.app/Contents/LoL/Config'
-        elif os.name == 'nt': #Windows
+        elif os.name == 'nt': # Windows
             location = 'C:/Riot Games/League of Legends/Config'
-        else: #Linux
+        else: # Linux
             print('\nSorry, linux is not supported...\n')
             quit()
-        #If the location path STILL isn't correct, prompt the user for the correct path
+        # If the location path STILL isn't correct, prompt the user for the correct path
         while not os.path.exists(location):
             writeLocation = True
             location = input('Could not find location of league config folder, please enter it here. It should look something like this "C:/Riot Games/League of Legends/Config" or "/Applications/League of Legends.app/Contents/LoL/Config":\n')
 
-    #if the API key isn't saved or clearly too short to be a champion.gg API key
-    if len(apiKey) < 20: #assuming consistency, champion.gg's is 32 chars
+    # if the API key isn't saved or clearly too short to be a champion.gg API key
+    if len(apiKey) < 20: # assuming consistency, champion.gg's is 32 chars
         writeToFile = True
-        #keep prompting user until they get it right
+        # keep prompting user until they get it right
         while len(apiKey) < 20:
             apiKey = input('Please enter a valid API key from api.champion.gg: ')
 
@@ -64,8 +73,8 @@ def main():
     apiKeyValidated = False
     while not apiKeyValidated:
         url = 'http://api.champion.gg/champion?api_key=' + apiKey
-        infoRequest = session.get(url) #start request
-        requestData = infoRequest.result().content.decode('utf-8') #finish request
+        infoRequest = session.get(url) # start request
+        requestData = infoRequest.result().content.decode('utf-8') # finish request
         try:
             champions = json.loads(requestData)
             apiKeyValidated = True
@@ -167,8 +176,6 @@ def main():
                 print('Huh, looks like something\'s up with data on {0} {1}...'.format(champion[0]['key'], role['role']))
 
         championsComplete += 1
-        #print('({0}/{1}) champions complete...'.format(championsComplete, totalChampions), end='\r')
-        #sys.stdout.flush()
 
     print('\n\nAll Done! Your item sets are ready!\n\n')
 
