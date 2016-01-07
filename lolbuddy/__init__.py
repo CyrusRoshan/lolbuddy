@@ -6,8 +6,8 @@ import os
 import pickle
 from copy import deepcopy
 import shutil
-import pprint # pprint used for debug, doesn't need to be used for production
-pp = pprint.PrettyPrinter(indent=4)
+# import pprint # pprint used for debug, doesn't need to be used for production
+# pp = pprint.PrettyPrinter(indent=4)
 
 def main():
 
@@ -141,7 +141,6 @@ def main():
                 })
 
                 highestWin = itemList('Highest Win %: ')
-
                 highestPlay = itemList('Most Popular: ')
 
                 # for skill order (goes in title)
@@ -167,17 +166,33 @@ def main():
                 for item in role['items']['mostGames']['items']:
                     highestPlay['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
 
+                # for trinkets
+                highestWinTrinket = {'games': 0, 'winPercent': 0}
+                highestPlayTrinket = {'games': 0, 'winPercent': 0}
+
+                for trinket in role['trinkets']:
+                    if trinket['games'] > highestPlayTrinket['games']:
+                        highestPlayTrinket = trinket
+                    if trinket['winPercent'] > highestWinTrinket['winPercent']:
+                        highestWinTrinket = trinket
+
+                highestWin['items'].append({'id': '{0}'.format(highestWinTrinket['item']['id']), 'count': 1})
+                highestPlay['items'].append({'id': '{0}'.format(highestPlayTrinket['item']['id']), 'count': 1})
+
+                # add item sublists to json object with item list info
                 jsonFile['blocks'].extend([highestWin, highestPlay])
 
-                itemSetFile = open('{0}/championgg{1}.json'.format(champFolder, roleNum), 'w+')
+                # save the json file to the champion's folder
+                itemSetFile = open('{0}/championgg{1}.json'.format(champFolder, roleNum + 1), 'w+')
                 itemSetFile.write(json.dumps(jsonFile))
 
             except:
-                print('Huh, looks like something\'s up with data on {0} {1}...'.format(champion[0]['key'], role['role']))
+                # e.g. for when champion.gg's API would serve empty item sets for some champion roles (e.g. Morde mid, Galio supp)
+                print('\nSomething went wrong when saving item lists for {0} {1}...'.format(champion[0]['key'], role['role']))
 
         championsComplete += 1
 
-    print('\n\nAll Done! Your item sets are ready!\n\n')
+    print('\nAll Done! Your item sets are ready!\n\n')
 
 
 if __name__ == '__main__':
