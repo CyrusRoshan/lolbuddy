@@ -6,8 +6,8 @@ import os
 import pickle
 from copy import deepcopy
 import shutil
-# import pprint # pprint used for debug, doesn't need to be used for production
-# pp = pprint.PrettyPrinter(indent=4)
+import pprint # pprint used for debug, doesn't need to be used for production
+pp = pprint.PrettyPrinter(indent=4)
 
 def main():
 
@@ -140,34 +140,34 @@ def main():
                     'items': []
                 })
 
-                winItems = itemList('Highest Win %: {0}% of {1} total games won'.format(role['items']['highestWinPercent']['winPercent'], role['items']['highestWinPercent']['games']))
+                highestWin = itemList('Highest Win %: ')
 
-                popItems = itemList('Most Popular: {0}% of {1} total games won'.format(role['items']['mostGames']['winPercent'], role['items']['mostGames']['games']))
+                highestPlay = itemList('Most Popular: ')
 
+                # for skill order (goes in title)
+                for skill in role['skills']['highestWinPercent']['order']:
+                    highestWin['type'] += skill + '>'
+                highestWin['type'] = highestWin['type'][:-1]
 
+                for skill in role['skills']['mostGames']['order']:
+                    highestPlay['type'] += skill + '>'
+                highestPlay['type'] = highestPlay['type'][:-1]
+
+                # for first items
+                for item in role['firstItems']['highestWinPercent']['items']:
+                    highestWin['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+
+                for item in role['firstItems']['mostGames']['items']:
+                    highestPlay['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+
+                # for full build
                 for item in role['items']['highestWinPercent']['items']:
-                    winItems['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+                    highestWin['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
 
                 for item in role['items']['mostGames']['items']:
-                    popItems['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+                    highestPlay['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
 
-                skillString = ''
-
-                winSkills = itemList('Highest Win %: {0}% of {1} total games won'.format(role['skills']['highestWinPercent']['winPercent'], role['skills']['highestWinPercent']['games']))
-                for skill in role['skills']['highestWinPercent']['order']:
-                    skillString += skill + '>'
-                winSkills['type'] = skillString[:-1]
-                winSkills['items'] = [{'id': '1001', 'count': 1}]
-
-                skillString = ''
-
-                popSkills = itemList('Most Popular: {0}% of {1} total games won'.format(role['skills']['mostGames']['winPercent'], role['skills']['mostGames']['games']))
-                for skill in role['skills']['mostGames']['order']:
-                    skillString += skill + '>'
-                popSkills['type'] = skillString[:-1]
-                popSkills['items'] = [{'id': '1001', 'count': 1}]
-
-                jsonFile['blocks'].extend([winItems, popItems, winSkills, popSkills])
+                jsonFile['blocks'].extend([highestWin, highestPlay])
 
                 itemSetFile = open('{0}/championgg{1}.json'.format(champFolder, roleNum), 'w+')
                 itemSetFile.write(json.dumps(jsonFile))

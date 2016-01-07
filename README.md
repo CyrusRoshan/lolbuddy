@@ -1,6 +1,8 @@
 #lolbuddy
 a cli tool to update league of legends itemsets and ability order from champion.gg
 
+lolbuddy automagically creates ingame item sets from the first items, final builds, and skill orders with the most games and highest win rates from champion.gg
+
 #Installation:
 
 As simple as ```pip3 install lolbuddy```
