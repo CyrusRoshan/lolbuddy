@@ -143,6 +143,7 @@ def main():
                 highestWin = itemList('Highest Win %: ')
                 highestPlay = itemList('Most Popular: ')
 
+
                 # for skill order (goes in title)
                 for skill in role['skills']['highestWinPercent']['order']:
                     highestWin['type'] += skill + '>'
@@ -152,19 +153,22 @@ def main():
                     highestPlay['type'] += skill + '>'
                 highestPlay['type'] = highestPlay['type'][:-1]
 
-                # for first items
-                for item in role['firstItems']['highestWinPercent']['items']:
-                    highestWin['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+                def insertItems(oldArray, newArray):
+                    for item in oldArray:
+                        # item id 2010 is for total biscuits, which cannot be bought in the shop and do not
+                        # show up if put in itemsets, so we switch to pots instead
+                        if (item['id'] == '2010'):
+                            newArray.append({'id': '2003', 'count': 1})
+                        else:
+                            newArray.append({'id': '{0}'.format(item['id']), 'count': 1})
 
-                for item in role['firstItems']['mostGames']['items']:
-                    highestPlay['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+                # for first items
+                insertItems(role['firstItems']['highestWinPercent']['items'], highestWin['items'])
+                insertItems(role['firstItems']['mostGames']['items'], highestPlay['items'])
 
                 # for full build
-                for item in role['items']['highestWinPercent']['items']:
-                    highestWin['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
-
-                for item in role['items']['mostGames']['items']:
-                    highestPlay['items'].append({'id': '{0}'.format(item['id']), 'count': 1})
+                insertItems(role['items']['highestWinPercent']['items'], highestWin['items'])
+                insertItems(role['items']['mostGames']['items'], highestPlay['items'])
 
                 # for trinkets
                 highestWinTrinket = {'games': 0, 'winPercent': 0}
