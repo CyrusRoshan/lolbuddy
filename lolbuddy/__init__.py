@@ -157,10 +157,12 @@ def main():
                     for item in oldArray:
                         # item id 2010 is for total biscuits, which cannot be bought in the shop and do not
                         # show up if put in itemsets, so we switch to pots instead
-                        if (item['id'] == '2003'):
-                            newArray.append({'id': '2010', 'count': 1})
+                        if ( item['id'] == 2010):
+                            newArray.append({'id': '2003', 'count': 1})
                         else:
                             newArray.append({'id': '{0}'.format(item['id']), 'count': 1})
+
+
 
                 # for first items
                 insertItems(role['firstItems']['highestWinPercent']['items'], highestWin['items'])
