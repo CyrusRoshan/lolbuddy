@@ -1,5 +1,5 @@
 #lolbuddy
-A CLI tool to update League of Legends™ item sets and ability order from champion.gg.
+A CLI tool to update League of Legends™ item sets and ability order from <a href="http://champion.gg">champion.gg</a>.
 
 lolbuddy automagically creates in-game item sets from the first items, final builds, and skill orders with the most games and highest win rates from champion.gg
 
