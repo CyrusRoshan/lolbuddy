@@ -1,7 +1,7 @@
 #lolbuddy
-a cli tool to update league of legends itemsets and ability order from champion.gg
+A CLI tool to update League of Legends™ item sets and ability order from <a href="http://champion.gg">champion.gg</a>.
 
-lolbuddy automagically creates ingame item sets from the first items, final builds, and skill orders with the most games and highest win rates from champion.gg
+lolbuddy automagically creates in-game item sets from the first items, final builds, and skill orders with the most games and highest win rates from champion.gg
 
 #Installation:
 
@@ -15,9 +15,9 @@ Use ```lolbuddy``` to start lolbuddy and automatically fetch and create the item
 
 If no API key or league installation location have been entered, or they are invalid, you will be prompted for the API key, and lolbuddy will check the default league location for your OS. If it is not found, you will be prompted for that as well.
 
-Use ```lolbuddy -r``` or ```lolbuddy --reset``` to reset lolbuddy (delete info on league location and API key)
+Use ```lolbuddy -r``` or ```lolbuddy --reset``` to reset lolbuddy (delete info on league location and API key).
 
-Use ```lolbuddy -d``` or ```lolbuddy --delete``` to delete all item sets
+Use ```lolbuddy -d``` or ```lolbuddy --delete``` to delete all item sets.
 
 ---
 
